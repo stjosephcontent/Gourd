@@ -1,4 +1,11 @@
 <?php
+/*
+ *	make sure $section_id, $section_title, $page_id, and $page_title are always set
+ *
+ *	may call function.characterConversions.php if it needs to "sanitize" strings
+ *
+**/
+
 if (isset($page_title) && !isset($page_id)) {
 	$page_id 		= sanitize($page_title);
 }
@@ -31,7 +38,6 @@ if (!isset($page_title)) {
 	$s				= trim($s,'/');
 	$s				= str_replace('/',' • ',$s);
 	$s				= str_replace('.php','',$s);
-	$s				= str_replace('_•_','_',$s);
 	$page_title		= glamourize($s);
 	$page_id		= sanitize($s);
 	$section_title 	= $page_title;
@@ -39,9 +45,11 @@ if (!isset($page_title)) {
 }
 
 function sanitize($i) {
+	require_once 'function.characterConversions.php';
 	$o 				= trim($i);
 	$o 				= strtolower($o);
-	$o 				= SEOify($o);
+	$o 				= str_replace(' ','_',$o);
+	$o 				= LegalizeText($o);
 	return $o;
 }
 
@@ -51,5 +59,21 @@ function glamourize($i) {
 	$o = ucwords($o);
 	return $o;
 }
+
+function var_name (&$iVar, &$aDefinedVars)
+//	@note:		the second parameter must always be get_defined_vars()
+//	@example:	var_name($iVar, get_defined_vars());
+    {
+    foreach ($aDefinedVars as $k=>$v)
+        $aDefinedVars_0[$k] = $v;
+
+    $iVarSave = $iVar;
+    $iVar     =!$iVar;
+
+    $aDiffKeys = array_keys (array_diff_assoc ($aDefinedVars_0, $aDefinedVars));
+    $iVar      = $iVarSave;
+
+    return $aDiffKeys[0];
+    }
 
 ?>

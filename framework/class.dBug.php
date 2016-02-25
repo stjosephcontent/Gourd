@@ -529,4 +529,10 @@ SCRIPTS;
 	}
 
 }
+
+function debug_vars($str) {
+	echo 'sdfsdfsdf';
+}
+
+
 ?>

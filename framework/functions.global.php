@@ -1,6 +1,23 @@
 <?php
 
-function localize($var,$mode='wimpy') {	
+/*
+function connect2database() {
+if (!isset($conn)) {
+	$conn = mysql_connect(CHUNKS_MYSQL_DB_SERVER,CHUNKS_MYSQL_DB_USER,CHUNKS_MYSQL_DB_PASSWORD,CHUNKS_MYSQL_DB_DB);
+	//$mysql_conn = new mysqli(CHUNKS_MYSQL_DB_SERVER,CHUNKS_MYSQL_DB_USER,CHUNKS_MYSQL_DB_PASSWORD,CHUNKS_MYSQL_DB_DB);
+	mysql_select_db(CHUNKS_MYSQL_DB_DB, $conn);
+	include_once 'good_sql.php';
+	}
+}
+
+function cleanForDB($arr) {
+	if (!isset($conn)) db_connect();
+	if ( get_magic_quotes_gpc() ) $arr = array_map('stripslashes', $arr);
+	return array_map("mysql_real_escape_string",$arr);
+}
+*/
+
+function localize($var,$mode='wimpy') {
 	global $G;
 	global $$var;
 	$o = $$var;
@@ -9,62 +26,128 @@ function localize($var,$mode='wimpy') {
 		if (isset($_COOKIE[$var]))	{ $o = $_COOKIE[$var]; 	}
 		if (isset($_POST[$var]))	{ $o = $_POST[$var]; 	}
 		if (isset($_GET[$var]))		{ $o = $_GET[$var];  	}
+		if (isset($G[$var]))		{ $o = $G[$var];  		}
+		#if (isset($_SERVER[$var]))	{ $o = $_SERVER[$var]; 	}
 	}
 	return $o;
 }
-
 function getAddress() {
 	// strip out real path. No args. also, not "/" at the beginning or end.
 	// ex:	products/Kraft/KraftDinner
-	$url=$_SERVER['REQUEST_URI'];
-	if ($x = strpos($url,'?')) {
-		$url = substr($url,0,$x);
-	}
-	if ($y = strpos($url,'#')) {
-		$url = substr($url,0,$y);
-	}
-	return trim($url,'/');
+	$address	= $_SERVER['REQUEST_URI'];
+	$x			= explode('?',$address);
+	$address	= $x[0];
+	$y			= explode('#',$address);
+	$address	= $y[0];
+	$pieces		= explode('/',$address);
+	$pieces		= array_filter($pieces);
+	$drop1st	= array_shift($pieces);
 	$address	= trim($address,'/');
 	return $address;
 }
 
-function __autoload($classname) {
-	$inc = 'class.'.$classname.'.php';	
-	include $inc;
-}
 
-function load_header() {
-	global $header;
-	if (! ($header instanceof Header)) {
-		$header  = new Header();
+function __autoload($class_name) {
+	// NEED TO FIX THIS
+	if ($class_name == 'Translation_Entry') {
+		$path1 = 'entry.php';
+		require_once $path1;
+	} else if ($class_name == 'Translations'){
+		$path1 = 'translations.php';
+		require_once $path1;
+	} else if ($class_name == 'NOOP_Translations'){
+		$path1 = 'translations.php';
+		require_once $path1;
+	} else if ($class_name == 'POMO_Reader'){
+		$path1 = 'streams.php';
+		require_once $path1;
+	} else if ($class_name == 'POMO_FileReader'){
+		$path1 = 'streams.php';
+		require_once $path1;
+	} else if ($class_name == 'POMO_StringReader'){
+		$path1 = 'streams.php';
+		require_once $path1;
+	} else if ($class_name == 'POMO_CachedFileReader'){
+		$path1 = 'streams.php';
+		require_once $path1;
+	} else if ($class_name == 'POMO_CachedIntFileReader'){
+		$path1 = 'streams.php';
+		require_once $path1;
+	} else if ($class_name == 'MO'){
+		$path1 = 'mo.php';
+		require_once $path1;
+	} else if ($class_name == 'wp_atom_server'){
+		$path1 = 'pluggable-deprecated.php';
+		require_once $path1;
+	} else {
+		$path1 = 'class.' . $class_name . '.php';
+		//$path2 = strtolower($class_name) . '.class.php';
+		//if (file_exists($path1)) {
+		require_once $path1;
+		//} else {
+		//	require_once $path2;
+		//}
 	}
-	return $header;
 }
 
 function load_function($func_name) {
 	require_once 'function.' . $func_name . '.php';
 }
 
-function load_core() {	
+function load_header() {
+	global $header;
+	if (! ($header instanceof Header)) $header = new Header;
+
+}
+
+function load_itemz() {
+	global $itemz;
+	if (! ($itemz instanceof Itemz)) $itemz = new Itemz;
+}
+
+function load_chunkz() {
+	global $chunkz;
+	if (! ($chunkz instanceof Chunkz)) $chunkz = new Chunkz;
+}
+
+function load_shoppe() {
+	global $shoppe;
+	if (! ($shoppe instanceof Shoppe)) $shoppe = new Shoppe;
+}
+
+function load_cms() {
+	global $cms;
+	if (! ($cms instanceof CMS)) $cms = new CMS;
+}
+
+function load_core() {
 	global $core;
 	if (! ($core instanceof Core)) $core = new Core;
 }
 
-function remove_accent($str)  {
-	$a = array('À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Æ', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ð', 'Ñ', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', 'Ø', 'Ù', 'Ú', 'Û', 'Ü', 'Ý', 'ß', 'à', 'á', 'â', 'ã', 'ä', 'å', 'æ', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ñ', 'ò', 'ó', 'ô', 'õ', 'ö', 'ø', 'ù', 'ú', 'û', 'ü', 'ý', 'ÿ', 'Ā', 'ā', 'Ă', 'ă', 'Ą', 'ą', 'Ć', 'ć', 'Ĉ', 'ĉ', 'Ċ', 'ċ', 'Č', 'č', 'Ď', 'ď', 'Đ', 'đ', 'Ē', 'ē', 'Ĕ', 'ĕ', 'Ė', 'ė', 'Ę', 'ę', 'Ě', 'ě', 'Ĝ', 'ĝ', 'Ğ', 'ğ', 'Ġ', 'ġ', 'Ģ', 'ģ', 'Ĥ', 'ĥ', 'Ħ', 'ħ', 'Ĩ', 'ĩ', 'Ī', 'ī', 'Ĭ', 'ĭ', 'Į', 'į', 'İ', 'ı', 'Ĳ', 'ĳ', 'Ĵ', 'ĵ', 'Ķ', 'ķ', 'Ĺ', 'ĺ', 'Ļ', 'ļ', 'Ľ', 'ľ', 'Ŀ', 'ŀ', 'Ł', 'ł', 'Ń', 'ń', 'Ņ', 'ņ', 'Ň', 'ň', 'ŉ', 'Ō', 'ō', 'Ŏ', 'ŏ', 'Ő', 'ő', 'Œ', 'œ', 'Ŕ', 'ŕ', 'Ŗ', 'ŗ', 'Ř', 'ř', 'Ś', 'ś', 'Ŝ', 'ŝ', 'Ş', 'ş', 'Š', 'š', 'Ţ', 'ţ', 'Ť', 'ť', 'Ŧ', 'ŧ', 'Ũ', 'ũ', 'Ū', 'ū', 'Ŭ', 'ŭ', 'Ů', 'ů', 'Ű', 'ű', 'Ų', 'ų', 'Ŵ', 'ŵ', 'Ŷ', 'ŷ', 'Ÿ', 'Ź', 'ź', 'Ż', 'ż', 'Ž', 'ž', 'ſ', 'ƒ', 'Ơ', 'ơ', 'Ư', 'ư', 'Ǎ', 'ǎ', 'Ǐ', 'ǐ', 'Ǒ', 'ǒ', 'Ǔ', 'ǔ', 'Ǖ', 'ǖ', 'Ǘ', 'ǘ', 'Ǚ', 'ǚ', 'Ǜ', 'ǜ', 'Ǻ', 'ǻ', 'Ǽ', 'ǽ', 'Ǿ', 'ǿ'); 
-	$b = array('A', 'A', 'A', 'A', 'A', 'A', 'AE', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I', 'D', 'N', 'O', 'O', 'O', 'O', 'O', 'O', 'U', 'U', 'U', 'U', 'Y', 's', 'a', 'a', 'a', 'a', 'a', 'a', 'ae', 'c', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i', 'n', 'o', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'u', 'y', 'y', 'A', 'a', 'A', 'a', 'A', 'a', 'C', 'c', 'C', 'c', 'C', 'c', 'C', 'c', 'D', 'd', 'D', 'd', 'E', 'e', 'E', 'e', 'E', 'e', 'E', 'e', 'E', 'e', 'G', 'g', 'G', 'g', 'G', 'g', 'G', 'g', 'H', 'h', 'H', 'h', 'I', 'i', 'I', 'i', 'I', 'i', 'I', 'i', 'I', 'i', 'IJ', 'ij', 'J', 'j', 'K', 'k', 'L', 'l', 'L', 'l', 'L', 'l', 'L', 'l', 'l', 'l', 'N', 'n', 'N', 'n', 'N', 'n', 'n', 'O', 'o', 'O', 'o', 'O', 'o', 'OE', 'oe', 'R', 'r', 'R', 'r', 'R', 'r', 'S', 's', 'S', 's', 'S', 's', 'S', 's', 'T', 't', 'T', 't', 'T', 't', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'W', 'w', 'Y', 'y', 'Y', 'Z', 'z', 'Z', 'z', 'Z', 'z', 's', 'f', 'O', 'o', 'U', 'u', 'A', 'a', 'I', 'i', 'O', 'o', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'A', 'a', 'AE', 'ae', 'O', 'o'); 
-	return str_replace($a, $b, $str); 
-} 
+function load_admin() {
+	global $admin;
+	if (! ($admin instanceof Admin)) $admin = new Admin;
+}
 
-function load_api() {
-	global $api;
-	if (! ($api instanceof RestClient)) {
-		$api = new RestClient();
-		if (defined('API_ENDPOINT'))	$api->endpoint(API_ENDPOINT);
-		if (defined('API_KEY'))			$api->apikey(API_KEY);
-		if (defined('API_USERID'))		$api->asUser(API_USERID);
-	}
-	return $api;
+function get_content($url)
+//	when fopen() is restricted, this seems to work. And besides, cURL is better.
+{
+    $ch = curl_init();
+    curl_setopt ($ch, CURLOPT_URL, $url);
+    curl_setopt ($ch, CURLOPT_HEADER, 0);
+    ob_start();
+    curl_exec ($ch);
+    curl_close ($ch);
+    $string = ob_get_contents();
+    ob_end_clean();
+    return $string;
+}
+
+function remove_accent($str)  {
+	$a = array('À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Æ', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ð', 'Ñ', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', 'Ø', 'Ù', 'Ú', 'Û', 'Ü', 'Ý', 'ß', 'à', 'á', 'â', 'ã', 'ä', 'å', 'æ', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ñ', 'ò', 'ó', 'ô', 'õ', 'ö', 'ø', 'ù', 'ú', 'û', 'ü', 'ý', 'ÿ', 'Ā', 'ā', 'Ă', 'ă', 'Ą', 'ą', 'Ć', 'ć', 'Ĉ', 'ĉ', 'Ċ', 'ċ', 'Č', 'č', 'Ď', 'ď', 'Đ', 'đ', 'Ē', 'ē', 'Ĕ', 'ĕ', 'Ė', 'ė', 'Ę', 'ę', 'Ě', 'ě', 'Ĝ', 'ĝ', 'Ğ', 'ğ', 'Ġ', 'ġ', 'Ģ', 'ģ', 'Ĥ', 'ĥ', 'Ħ', 'ħ', 'Ĩ', 'ĩ', 'Ī', 'ī', 'Ĭ', 'ĭ', 'Į', 'į', 'İ', 'ı', 'Ĳ', 'ĳ', 'Ĵ', 'ĵ', 'Ķ', 'ķ', 'Ĺ', 'ĺ', 'Ļ', 'ļ', 'Ľ', 'ľ', 'Ŀ', 'ŀ', 'Ł', 'ł', 'Ń', 'ń', 'Ņ', 'ņ', 'Ň', 'ň', 'ŉ', 'Ō', 'ō', 'Ŏ', 'ŏ', 'Ő', 'ő', 'Œ', 'œ', 'Ŕ', 'ŕ', 'Ŗ', 'ŗ', 'Ř', 'ř', 'Ś', 'ś', 'Ŝ', 'ŝ', 'Ş', 'ş', 'Š', 'š', 'Ţ', 'ţ', 'Ť', 'ť', 'Ŧ', 'ŧ', 'Ũ', 'ũ', 'Ū', 'ū', 'Ŭ', 'ŭ', 'Ů', 'ů', 'Ű', 'ű', 'Ų', 'ų', 'Ŵ', 'ŵ', 'Ŷ', 'ŷ', 'Ÿ', 'Ź', 'ź', 'Ż', 'ż', 'Ž', 'ž', 'ſ', 'ƒ', 'Ơ', 'ơ', 'Ư', 'ư', 'Ǎ', 'ǎ', 'Ǐ', 'ǐ', 'Ǒ', 'ǒ', 'Ǔ', 'ǔ', 'Ǖ', 'ǖ', 'Ǘ', 'ǘ', 'Ǚ', 'ǚ', 'Ǜ', 'ǜ', 'Ǻ', 'ǻ', 'Ǽ', 'ǽ', 'Ǿ', 'ǿ');
+	$b = array('A', 'A', 'A', 'A', 'A', 'A', 'AE', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I', 'D', 'N', 'O', 'O', 'O', 'O', 'O', 'O', 'U', 'U', 'U', 'U', 'Y', 's', 'a', 'a', 'a', 'a', 'a', 'a', 'ae', 'c', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i', 'n', 'o', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'u', 'y', 'y', 'A', 'a', 'A', 'a', 'A', 'a', 'C', 'c', 'C', 'c', 'C', 'c', 'C', 'c', 'D', 'd', 'D', 'd', 'E', 'e', 'E', 'e', 'E', 'e', 'E', 'e', 'E', 'e', 'G', 'g', 'G', 'g', 'G', 'g', 'G', 'g', 'H', 'h', 'H', 'h', 'I', 'i', 'I', 'i', 'I', 'i', 'I', 'i', 'I', 'i', 'IJ', 'ij', 'J', 'j', 'K', 'k', 'L', 'l', 'L', 'l', 'L', 'l', 'L', 'l', 'l', 'l', 'N', 'n', 'N', 'n', 'N', 'n', 'n', 'O', 'o', 'O', 'o', 'O', 'o', 'OE', 'oe', 'R', 'r', 'R', 'r', 'R', 'r', 'S', 's', 'S', 's', 'S', 's', 'S', 's', 'T', 't', 'T', 't', 'T', 't', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'W', 'w', 'Y', 'y', 'Y', 'Z', 'z', 'Z', 'z', 'Z', 'z', 's', 'f', 'O', 'o', 'U', 'u', 'A', 'a', 'I', 'i', 'O', 'o', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'A', 'a', 'AE', 'ae', 'O', 'o');
+	return str_replace($a, $b, $str);
 }
 
 function SEOify($i){
@@ -79,159 +162,69 @@ function SEOify($i){
 	$o			= str_ireplace('[', ' ',$o);
 	$o			= str_ireplace(']', ' ',$o);
 	$o			= trim($o);
-    $patterns 	= array( "([\40])" , "([^a-zA-Z0-9_-])", "(-{2,})" ); 
-    $replacers	= array("-", "", "-"); 
+    $patterns 	= array( "([\40])" , "([^a-zA-Z0-9_-])", "(-{2,})" );
+    $replacers	= array("-", "", "-");
     $o			= preg_replace($patterns, $replacers, $o);
     return $o;
 }
 
-function z($p) {
-	$o = URLROOT_Z . '/' . trim($p,'/');
+function prettify($html) {
+	$tidy	= new tidy;
+	$config	= array(
+		'clean'				=> true,
+		'indent'         	=> true,
+		'new-inline-tags'	=> 'header,canvas,article',
+		'vertical-space'	=> false,
+		'wrap-php'			=> false,
+		'output-xhtml'		=> true,
+		'indent-attributes'	=> false,
+		'wrap-attributes'	=> false,
+		'wrap-sections'		=> false,
+		'indent-spaces'		=> 4,
+		'tab-size'			=> 4,
+		'wrap'				=> 0,
+		'output-bom'		=> false,
+		'doctype'			=> 'omit',
+		'markup'			=> true
+	);
+	$tidy->parseString($html, $config, 'utf8');
+	$tidy->cleanRepair();
+	return $tidy;
+}
+
+function minify($html) {
+	$o = preg_replace('/\s\s+/', ' ', $html);
+	$o = str_replace('> <','><',$o);
 	return $o;
 }
 
-function gourd_file_exists($fyle) {
-	
-	if (isset($_SERVER['ZONE'])) {
-		switch ($_SERVER['ZONE']) {
-		
-			case 'dev':
-			if (file_exists(PATH_ROOT . '/dev/inc/' . $fyle)) {
-				return PATH_ROOT . '/dev/inc/' . $fyle;
-				break;
-			} elseif (file_exists(PATH_ROOT . '/dev/web/' . $fyle)) {
-				return PATH_ROOT . '/dev/web/' . $fyle;
-				break;
-			}
-			
-			case 'stage':
-			if (file_exists(PATH_ROOT . '/stage/inc/' . $fyle)) {
-				return PATH_ROOT . '/stage/inc/' . $fyle;
-				break;
-			} elseif (file_exists(PATH_ROOT . '/stage/web/' . $fyle)) {
-				return PATH_ROOT . '/stage/web/' . $fyle;
-				break;
-			}
-			
-			case 'prod':
-			if (file_exists(PATH_ROOT . '/prod/inc/' . $fyle)) {
-				return PATH_ROOT . '/prod/inc/' . $fyle;
-				break;
-			} elseif (file_exists(PATH_ROOT . '/prod/web/' . $fyle)) {
-				return PATH_ROOT . '/prod/web/' . $fyle;
-				break;
-			}	
-		}	
-	} else {
-		if (file_exists(PATH_ROOT . '/' . $_SERVER['HTTP_HOST'] . '/' . $fyle)) {
-			return PATH_ROOT . '/' . $_SERVER['HTTP_HOST'] . '/' . $fyle;
-		}
+function increaseNumberOfColumns($n=1) {
+	global $Page;
+	$Page['numberofcolumns'] = $Page['numberofcolumns'] + $n;
+}
+
+function d($list) {
+	// simple scalar debugger
+	$things = func_get_args();
+	$o  = '';
+	$o .= '<div class="debug">d()</div>';
+	$o .= '<ul>';
+	foreach ($things as $n=>$v) {
+		$o .= '<li><span class="varname">'.$n.'</span><span class="varval">'.$v.'</span></li>';
 	}
-	return false;
+	$o .= '</ul>';
+	$o .= '</div>';
+	return $o;
 }
 
-function gourd_asset_exists($fyle) {
-	//	note: this returns that actual blob. not just a path.
-	switch ($_SERVER['ZONE']) {
-		case 'dev':
-		if ($r = file_get_contents(PATH_ROOT . '/dev/z/' . $fyle)) {
-			return $r;
-			//break;
-		}
-		case 'stage':
-		if ($r = file_get_contents(PATH_ROOT . '/stage/z/' . $fyle)) {
-			return $r;
-			//break;
-		}	
-		case 'prod':
-		if ($r = file_get_contents(PATH_ROOT . '/prod/z/' . $fyle)) {
-			return $r;
-			//break;
-		}
+/*
+function ta($stackid) {
+	//	ta stands for Text Asset and it is a type chunk
+	if (strlen($stackid)) {
+	global $tas;
+	$tas[] = $stackid;
+	return '<!-- ' . $stackid . ' -->';
 	}
-	if (defined('PATHROOT_CORE')) {
-		if ($r = file_get_contents(PATHROOT_CORE . '/' . $fyle)) {
-			return $r;
-		} 
-	} elseif (defined('URLROOT_CORE')) {
-		if ($r = file_get_contents(URLROOT_CORE . '/' . $fyle)) {
-			return $r;
-		}
-	}
-	return false;
 }
-
-
-function unta($tas,$inhtml) {
-	$html = $inhtml;
-	if (!empty($tas)) {
-		global $lang;
-		global $api;
-		load_api();
-		if (empty($lang)) $lang = 'en';
-		$q = array(
-			'criteria' 	=> array(
-				'meta.handle' => array('$in' => $tas),
-				'meta.ModuleHandle' => TEXTASSETS_MODULEHANDLE
-			),
-			'fields'	=> array('content.' . $lang,'meta.handle')
-		);
-		$m = new Mongo('mongodb://hefty01');
-		$textassets = $m->gourd01->textassets01->find(
-			$q['criteria'],
-			$q['fields']
-		);
-		$mapz				= array();
-		$empty_tas			= array();
-		foreach ($textassets as $t) {
-			if (isset($t['content'][$lang])) {
-				$k			= $t['meta']['handle'];
-				$v			= $t['content'][$lang];
-				$mapz[$k]	= base64_encode($v);
-			} else {
-				$empty_tas[]= $t['meta']['handle'];
-			}
-		}
-		$pat			= '/<!-- #gourd:ta:(\S+) -->/';
-		$html			= preg_replace_callback($pat,create_function('$matches','
-			$mapz		= unserialize(\'' . serialize($mapz) . '\');
-			$empty_tas 	= unserialize(\'' . serialize($empty_tas) . '\');
-			$key		= $matches[1];
-			$r			= \'<span class="missingtextasset">\' . $key . \'</span>\';
-			if (isset($mapz[$key])) {
-				$r 		= base64_decode($mapz[$key]);
-			} elseif (!in_array($key,$empty_tas)) {
-				$m 		= new Mongo("mongodb://hefty01");
-				$ta = array(
-					"label"	=> "Needs Content! " . $key,
-					"meta"	=> array(
-						"handle"		=> $key,
-						"ClientID"		=> '.API_CLIENTID.',
-						"ModuleHandle" 	=> "'.TEXTASSETS_MODULEHANDLE.'"
-					)
-				);
-				$ins = $m->gourd01->textassets01->save($ta);
-			}
-			return $r;
-		'),$html);
-	}
-	return $html;
-}
-
-function ta($handle) {
-	if (!isset($GLOBALS['tas'])) $GLOBALS['tas'] = array();
-	$GLOBALS['tas'][] = $handle;
-	return '<!-- #gourd:ta:' . $handle . ' -->';
-}
-
-function swapLanguage() {
-	global $lang;
-	global $notlang;
-	$goodlang	= $notlang;
-	$badlang	= $lang;
-	$lang		= $goodlang;
-	$notlang	= $badlang;
-	setcookie('lang',$lang,0,'/');
-}
-
+*/
 ?>

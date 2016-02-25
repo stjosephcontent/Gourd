@@ -36,13 +36,10 @@ function validURL($i) {
 
 function niceTrunc($i,$numwords) {
 	// take a large amount of text and truncuate it in a nice way,
-	$iarr	= explode(' ',$i);
-	$oarr	= array_slice($iarr,0,$numwords);
-	$o		= implode(' ',$oarr);
-	$o 		= trim($o,',');
-	if ($numwords < sizeof($iarr)) {
-		$o		.= '...';	
-	}
+	$iarr = explode(' ',$i);
+	$oarr = array_slice($iarr,0,$numwords);
+	$o = implode(' ',$oarr);
+	$o .= '...';
 	return $o;
 }
 
