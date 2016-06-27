@@ -38,21 +38,22 @@ define('ROOT_OFFSET',parse_url(STATIC_FILES_URLROOT, PHP_URL_PATH));
 	
 	public function setDocType($string) {
 		$lcase_shorthand = preg_replace('/\s\s+/', ' ', strtolower($string));
+		$ o = '';
 		switch ($lcase_shorthand) {
 			case 'html4strict':
-			$o = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">';
+			$o .= '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">';
 			break;
 			case 'xhtml1.1':
-			$o = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
+			$o .= '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
 			break;
 			case 'xhtml1.0':
-			$o = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
+			$o .= '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
 			break;
 			case 'html5':
-			$o = '<!DOCTYPE html>';
+			$o .= '<!DOCTYPE html>';
 			break;
 			default:
-			$o = $string;
+			$o .= $string;
 			break;
 		}
 		$this->DoctypeDeclaration = $o;
@@ -165,9 +166,6 @@ define('ROOT_OFFSET',parse_url(STATIC_FILES_URLROOT, PHP_URL_PATH));
 			foreach ($bad_css as $b) {
 				if (strpos($b,'/') === 0) $b = ROOT_OFFSET . $b;
 				$good_css[] = rtrim($b,'/');
-				
-
-				
 			}
 			$url  = MINIFY_URLROOT . '/?f=';
 			$url .= implode(',',$good_css);
@@ -245,7 +243,6 @@ define('ROOT_OFFSET',parse_url(STATIC_FILES_URLROOT, PHP_URL_PATH));
 			$o .=  BR . '//]]>' . BR . '</script>';
 		}
 
-		
 		// external javascript
 		if (!empty($this->body['combined_js'])) {
 			$jsarray = array_unique(array_filter($this->body['combined_js']));
@@ -271,7 +268,7 @@ define('ROOT_OFFSET',parse_url(STATIC_FILES_URLROOT, PHP_URL_PATH));
 		$o .= '</head>';
 		$o .= BR;
 		
-		$o .= '<body onload="if(typeof init==\'function\')init();"';
+		$o .= '<body data-spy="scroll" data-target="#sidebar"';
 		if (!strlen($this->body_id))	$o .=  ' id="' . $this->body_id . '"';
 		if (!strlen($this->body_class)) $o .=  ' class="' . $this->body_class . '"';
 		$o .= '>';
@@ -280,15 +277,16 @@ define('ROOT_OFFSET',parse_url(STATIC_FILES_URLROOT, PHP_URL_PATH));
 	return $o;
 	
 	}
-	
+	0
 	public function display() {
 		$html = $this->buildhtml();
 		echo $html;
 	}
 	
 	public function spill() {
+		$dbg = 'ROOT_OFFSET = ' . ROOT_OFFSET . ' & STATIC_FILES_URLROOT = ' . STATIC_FILES_URLROOT;
 		$html = $this->buildhtml();
-		return $html;
+		return 'FOOOOOO ' . $dbg . $html;
 	}
 	
 	public function display_pretty() {
@@ -324,7 +322,6 @@ define('ROOT_OFFSET',parse_url(STATIC_FILES_URLROOT, PHP_URL_PATH));
 		$prettyhtml = $html;
 		$o = '<pre>' . htmlspecialchars($prettyhtml) . '</pre>';
 		echo $o;
-	}			
+	}
 }
-
 ?>
