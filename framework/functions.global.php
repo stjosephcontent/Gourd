@@ -1,33 +1,16 @@
 <?php
 
-/*
-function connect2database() {
-if (!isset($conn)) {
-	$conn = mysql_connect(CHUNKS_MYSQL_DB_SERVER,CHUNKS_MYSQL_DB_USER,CHUNKS_MYSQL_DB_PASSWORD,CHUNKS_MYSQL_DB_DB);
-	//$mysql_conn = new mysqli(CHUNKS_MYSQL_DB_SERVER,CHUNKS_MYSQL_DB_USER,CHUNKS_MYSQL_DB_PASSWORD,CHUNKS_MYSQL_DB_DB);
-	mysql_select_db(CHUNKS_MYSQL_DB_DB, $conn);
-	include_once 'good_sql.php';
-	}
-}
-
-function cleanForDB($arr) {
-	if (!isset($conn)) db_connect();
-	if ( get_magic_quotes_gpc() ) $arr = array_map('stripslashes', $arr);
-	return array_map("mysql_real_escape_string",$arr);
-}
-*/
-
 function localize($var,$mode='wimpy') {
 	global $G;
 	global $$var;
 	$o = $$var;
 	if (!isset($$var) || $mode == 'greedy') {
 		// follow variables_order: "EGPCS"
-		if (isset($_COOKIE[$var]))	{ $o = $_COOKIE[$var]; 	}
-		if (isset($_POST[$var]))	{ $o = $_POST[$var]; 	}
-		if (isset($_GET[$var]))		{ $o = $_GET[$var];  	}
-		if (isset($G[$var]))		{ $o = $G[$var];  		}
-		#if (isset($_SERVER[$var]))	{ $o = $_SERVER[$var]; 	}
+		if (isset($_COOKIE[$var]))	{ $o = $_COOKIE[$var]; }
+		if (isset($_POST[$var]))	{ $o = $_POST[$var]; }
+		if (isset($_GET[$var]))		{ $o = $_GET[$var]; }
+		if (isset($G[$var]))		{ $o = $G[$var]; }
+		#if (isset($_SERVER[$var]))	{ $o = $_SERVER[$var]; }
 	}
 	return $o;
 }
@@ -97,7 +80,6 @@ function load_function($func_name) {
 function load_header() {
 	global $header;
 	if (! ($header instanceof Header)) $header = new Header;
-
 }
 
 function load_itemz() {
@@ -162,7 +144,7 @@ function SEOify($i){
 	$o			= str_ireplace('[', ' ',$o);
 	$o			= str_ireplace(']', ' ',$o);
 	$o			= trim($o);
-    $patterns 	= array( "([\40])" , "([^a-zA-Z0-9_-])", "(-{2,})" );
+    $patterns   = array( "([\40])" , "([^a-zA-Z0-9_-])", "(-{2,})" );
     $replacers	= array("-", "", "-");
     $o			= preg_replace($patterns, $replacers, $o);
     return $o;
@@ -172,7 +154,7 @@ function prettify($html) {
 	$tidy	= new tidy;
 	$config	= array(
 		'clean'				=> true,
-		'indent'         	=> true,
+		'indent'            => true,
 		'new-inline-tags'	=> 'header,canvas,article',
 		'vertical-space'	=> false,
 		'wrap-php'			=> false,
@@ -215,6 +197,11 @@ function d($list) {
 	$o .= '</ul>';
 	$o .= '</div>';
 	return $o;
+}
+
+function z($p) {
+    $o = STATIC_FILES_URLROOT . '/' . trim($p,'/');
+    return $o;
 }
 
 ?>
