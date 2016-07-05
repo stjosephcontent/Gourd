@@ -217,14 +217,4 @@ function d($list) {
 	return $o;
 }
 
-/*
-function ta($stackid) {
-	//	ta stands for Text Asset and it is a type chunk
-	if (strlen($stackid)) {
-	global $tas;
-	$tas[] = $stackid;
-	return '<!-- ' . $stackid . ' -->';
-	}
-}
-*/
 ?>
