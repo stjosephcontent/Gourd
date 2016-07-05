@@ -321,7 +321,7 @@ class CMS extends Chunkz {
 		if ($this->Plane == 1) 		$new_stack['Chunks'][] = array();	//	Live plane: nothing
 		$new_stack['Chunks'][]	= $doc;								//	Beta plane: the doc
 		//	stack
-		$this->mongodb->stacks->insert($new_stack, array('safe' => true));
+		$this->mongodb->stacks->insert($new_stack, array('w' => 1));
 		
 		//	stackXModule
 			
