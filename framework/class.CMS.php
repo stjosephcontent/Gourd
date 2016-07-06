@@ -382,7 +382,7 @@ class CMS extends Chunkz {
 			foreach ($le_stack['Chunks'] as $thischunk) {	if (!empty($thischunk['CUID'])) $this->deleteURI($thischunk['CUID'],'Chunk');	}
 		}
 		
-		$kill = $this->mongodb->stacks->remove(array('_id' => strval($suid)),array('safe' => true));
+		$kill = $this->mongodb->stacks->remove(array('_id' => strval($suid)),array('w' => 1));
 		return (bool) $kill;
 	}
 
