@@ -69,9 +69,9 @@ function getTitleFromStack($stack) {
 
 function getHighestChunkInStack($stack) {
 	foreach ($stack['Chunks'] as $p => $chunk) {
-		$o					= $chunk;
-		$o['Plane']			= $p;
-		$o['PrettyPlane']	= getPrettyPlane($p);
+		$o = $chunk;
+		$o['Plane'] = $p;
+		$o['PrettyPlane'] = getPrettyPlane($p);
 	}
 	return $o;
 }
@@ -87,18 +87,18 @@ function getHighestPlaneInStack($stack) {
 function getChunkFromStackByCUID($stack,$cuid) {
 	foreach ($stack['Chunks'] as $p => $chunk) {
 		if ($chunk['CUID'] == $cuid) {
-			$o					= $chunk;
-			$o['Plane']			= $p;
-			$o['PrettyPlane']	= getPrettyPlane($p);
+			$o = $chunk;
+			$o['Plane']	= $p;
+			$o['PrettyPlane'] = getPrettyPlane($p);
 		}
 	}
 	return $o;
 }
 
 function getChunkFromStackByPlane($stack,$plane) {
-	$o					= $stack['Chunks'][$plane];
-	$o['Plane']			= $plane;
-	$o['PrettyPlane']	= getPrettyPlane($plane);
+	$o = $stack['Chunks'][$plane];
+	$o['Plane']	= $plane;
+	$o['PrettyPlane'] = getPrettyPlane($plane);
 	return $o;
 }
 
