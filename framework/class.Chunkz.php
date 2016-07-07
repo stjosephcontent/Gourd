@@ -222,10 +222,27 @@ class Chunkz extends Core {
 		return $r;
 	}
 	
+	public function flatFamilyTree($tree,$prefix='') {
+		$prefix_delim = ' ➛ ';
+		$r = array();
+		foreach ($tree as $branch) {
+			$thisnode = $branch;
+			if (isset($thisnode['children'])) {
+				unset($thisnode['children']);
+			}
+			$thisnode['Full_Title_en'] = $prefix . $branch['Title_en'];
+			$r[] = $thisnode;
+			if (isset($branch['children'])) {
+				$r = array_merge($r,$this->flatFamilyTree($branch['children'],$prefix.$branch['Title_en'].$prefix_delim));
+			}
+		}
+		return $r;
+	}
+
 	public function getFamilyTree($ModuleID,$Plane,$PSUID=0,$f=array('Chunks')) {
 		
-		$r 					= array();
-		$c 					= array('ModuleID' => $ModuleID,"Chunks.$Plane.PSUID" => (string) $PSUID);
+		$r = array();
+		$c = array('ModuleID' => $ModuleID,"Chunks.$Plane.PSUID" => (string) $PSUID);
 		
 		if ($Plane > 0) {
 			$c2				= array('ModuleID' => $ModuleID,"Chunks.0.PSUID" => (string) $PSUID);

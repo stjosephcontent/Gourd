@@ -185,7 +185,7 @@ class CMS extends Chunkz {
 			$this->drillStackDescendants($this_stack['Chunks'][$plane]['PSUID'],$plane,false);
 		}
 		return $this->ancestralpile;
-	} 
+	}
 
 	public function returnancestralpile() {
 		return $this->ancestralpile;
@@ -194,7 +194,7 @@ class CMS extends Chunkz {
 	public function getSEOPathFromCUID($CUID,$lang='en') {
 		
 		$plane = 99;
-		
+	 	
 		if ($le_stack = $this->findStackThatContainsCUID($CUID)) {
 			foreach ($le_stack['Chunks'] as $thisplane => $thischunk) {
 				if (isset($thischunk['CUID']) && $thischunk['CUID'] == $CUID) $plane = intval($thisplane);
@@ -274,27 +274,31 @@ class CMS extends Chunkz {
 		} else {
 			$r = $this->createStack($doc,$SUID);	
 		}
-		
-		//$kill_URIs = $this->deleteAllURIsInStack($SUID);
-		
 		return $r;
 	}
 
 	public function getPossibleParents($ModuleID,$SUID=NULL) {
 		//	Note: We should be filtering out paradoxical parents (descendants)
 		//	http://www.mongodb.org/display/DOCS/Advanced+Queries
-		$criterea1	= array('ModuleID' => $ModuleID, 'Chunks.0.PSUID' => '0');
-		$criterea2	= array('ModuleID' => $ModuleID, 'Chunks.1.PSUID' => '0');
-		$fields		= array('_id' => 1,'Chunks' => 1,'SeminalCUID' => 2);
-		$r1 = $this->getStacks($criterea1,$fields);
-		$r2 = $this->getStacks($criterea2,$fields);
-		$r = array_merge(iterator_to_array($r1),iterator_to_array($r2));
+		if ($SUID === NULL) {
+			//	if $SUID is NULL, choose only progenitors, because that's the old behaviour
+			$c = array(
+				'$or' => array(
+					array('ModuleID' => $ModuleID, 'Chunks.0.PSUID' => '0'),
+					array('ModuleID' => $ModuleID, 'Chunks.1.PSUID' => '0')
+				)
+			);
+			$f = array('_id' => 1,'Chunks' => 1,'SeminalCUID' => 2);
+			$curs = $this->getStacks($c,$f);
+			$r = iterator_to_array($curs);
+		} else {
+			$r = $this->flatFamilyTree($this->getFamilyTree($ModuleID,0));
+		}
 		return $r;
 	}
 
 	public function addMeaningToChunk($doc) {
 		if (!isset($doc['CUID'])) $doc['CUID'] = 'c' . uniqid();
-		
 		$author_id			= $this->UserID;
 		$author				= $this->getUser($author_id);
 		$doc['AuthorID']	= $author_id;
