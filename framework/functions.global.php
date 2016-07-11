@@ -112,6 +112,17 @@ function load_admin() {
 	if (! ($admin instanceof Admin)) $admin = new Admin;
 }
 
+function load_api() {
+	global $api;
+	if (! ($api instanceof RestClient)) {
+		$api = new RestClient();
+		if (defined('API_ENDPOINT')) $api->endpoint(API_ENDPOINT);
+		if (defined('API_KEY')) $api->apikey(API_KEY);
+		if (defined('API_USERID')) $api->asUser(API_USERID);
+	}
+	return $api;
+}
+
 function get_content($url)
 //	when fopen() is restricted, this seems to work. And besides, cURL is better.
 {
