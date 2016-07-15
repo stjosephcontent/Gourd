@@ -30,7 +30,7 @@ function getAddress() {
 }
 
 
-function __autoload($class_name) {
+function gourd_autoload($class_name) {
 	// NEED TO FIX THIS
 	if ($class_name == 'Translation_Entry') {
 		$path1 = 'entry.php';
@@ -72,6 +72,8 @@ function __autoload($class_name) {
 		//}
 	}
 }
+
+spl_autoload_register('gourd_autoload');
 
 function load_function($func_name) {
 	require_once 'function.' . $func_name . '.php';
