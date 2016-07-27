@@ -31,46 +31,67 @@ function getAddress() {
 
 
 function gourd_autoload($class_name) {
+	
 	// NEED TO FIX THIS
-	if ($class_name == 'Translation_Entry') {
+	//	"NEED TO FIX THIS" is not a helpful comment
+
+	switch ($class_name) {
+
+		case 'Translation_Entry':
 		$path1 = 'entry.php';
-		require_once $path1;
-	} else if ($class_name == 'Translations'){
+		break;
+
+		case 'Translations':
+		case 'NOOP_Translations':
 		$path1 = 'translations.php';
-		require_once $path1;
-	} else if ($class_name == 'NOOP_Translations'){
-		$path1 = 'translations.php';
-		require_once $path1;
-	} else if ($class_name == 'POMO_Reader'){
+		break;
+
+		case 'POMO_Reader':
+		case 'POMO_FileReader':
+		case 'POMO_StringReader':
+		case 'POMO_CachedFileReader':
+		case 'POMO_CachedIntFileReader':
 		$path1 = 'streams.php';
-		require_once $path1;
-	} else if ($class_name == 'POMO_FileReader'){
-		$path1 = 'streams.php';
-		require_once $path1;
-	} else if ($class_name == 'POMO_StringReader'){
-		$path1 = 'streams.php';
-		require_once $path1;
-	} else if ($class_name == 'POMO_CachedFileReader'){
-		$path1 = 'streams.php';
-		require_once $path1;
-	} else if ($class_name == 'POMO_CachedIntFileReader'){
-		$path1 = 'streams.php';
-		require_once $path1;
-	} else if ($class_name == 'MO'){
+		break;
+
+		case 'MO':
 		$path1 = 'mo.php';
-		require_once $path1;
-	} else if ($class_name == 'wp_atom_server'){
+		break;
+
+		case 'wp_atom_server':
 		$path1 = 'pluggable-deprecated.php';
-		require_once $path1;
-	} else {
+		break;
+
+		case 'DOPTGTemplates':
+		$path1 = $_SERVER['DOCUMENT_ROOT'] . '/blog/wp-content/plugins/doptg/views/templates.php';
+		break;
+
+		case 'DOPThumbnailGalleryFrontEnd':
+		$path1 = $_SERVER['DOCUMENT_ROOT'] . '/blog/wp-content/plugins/doptg/doptg-frontend.php';
+		break;
+
+		case 'DOPThumbnailGalleryBackEnd':
+		$path1 = $_SERVER['DOCUMENT_ROOT'] . '/blog/wp-content/plugins/doptg/doptg-backend.php';
+		break;
+
+		case 'xrstf_Composer52_ClassLoader':
+		$path1 = $_SERVER['DOCUMENT_ROOT'] . '/blog/wp-content/plugins/mailchimp-for-wp/vendor/autoload_52.php';
+		break;
+
+		case 'MC4WP_Lite':
+		case 'MC4WP_Lite_Checkbox_Manager':
+		case 'MC4WP_Lite_Widget':
+		case 'MC4WP_Form_Listener':
+		case 'MC4WP_Lite_Form_Manager':
+		$path1 = $_SERVER['DOCUMENT_ROOT'] . '/blog/wp-content/plugins/mailchimp-for-wp/includes/class-plugin.php';
+		break;
+
+		default:
 		$path1 = 'class.' . $class_name . '.php';
-		//$path2 = strtolower($class_name) . '.class.php';
-		//if (file_exists($path1)) {
-		require_once $path1;
-		//} else {
-		//	require_once $path2;
-		//}
+		break;
 	}
+
+	require_once $path1;
 }
 
 spl_autoload_register('gourd_autoload');
